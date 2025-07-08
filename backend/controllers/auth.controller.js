@@ -4,6 +4,7 @@ import ResponseError from "../types/ResponseError.js";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import User from "../models/user.model.js";
+import jwt from "jsonwebtoken"
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -86,7 +87,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
   if (!decoded) {
     throw new ResponseError("Invalid token", 401);
   }
-  const { email, password } = decoded;
+  const { email, password, username } = decoded;
 
   const newUser = await Auths.create({
     email,
@@ -96,7 +97,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     auth: newUser._id,
-    name: newUser.username,
+    username: newUser.username,
   });
 
   if (!newUser || !user) {
@@ -111,3 +112,11 @@ export const verifyEmail = asyncHandler(async (req, res) => {
     message: "Email verified and User registered successfully",
   });
 });
+
+export const logout = asyncHandler(async (req, res)=>{
+    res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+  });
+  res.json({ success: true, message: "Logout successful" });
+})
