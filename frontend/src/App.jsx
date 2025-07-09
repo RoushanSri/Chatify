@@ -1,10 +1,11 @@
 import React from "react"
+import AuthLayout from "./pages/AuthLayout"
 
 function App() {
 
   return (
     <>
-      <h1>Hello World!!</h1>
+      <AuthLayout/>
     </>
   )
 }
