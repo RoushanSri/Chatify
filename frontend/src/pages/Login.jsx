@@ -1,145 +1,230 @@
-import React from 'react';
-import img1 from "../assets/image1.webp";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from 'react-redux'
+import { loginUser } from "../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
+import { Check, Mail, Lock, MessageCircle, ArrowRight } from 'lucide-react';
 
-const Login = ({formData, handleInputChange, setFocusedField, focusedField, handleSubmit, toggleAuthMode, rememberMe, setRememberMe}) => {
+const Login = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("userEmail");
+    if (savedEmail) {
+      setFormData((prevData) => ({ ...prevData, email: savedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
+
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.email || !formData.password) {
+      console.log("Please fill all the fields");
+      return;
+    }
+    
+    setIsLoading(true);
+    dispatch(loginUser({ email: formData.email, password: formData.password }))
+      .then((response) => {
+        if (response.payload.success) {
+          if (rememberMe)
+            localStorage.setItem("userEmail", formData.email);
+          navigate("/u/");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred during login:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  const features = [
+    "Real-time messaging with friends and groups",
+    "Share images, files, and voice notes instantly", 
+    "Customizable chat themes and emojis",
+    "End-to-end encrypted conversations"
+  ];
 
   return (
-      <div className="relative z-10 h-screen flex items-center justify-center p-4 gap-12">
-        <div className="w-full max-w-2xl h-full flex items-center">
-                        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-8 sm:p-10 relative overflow-hidden w-full h-full flex flex-col justify-center">
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-purple-500/10 rounded-3xl"></div>
-              
-                          <img
-                            src={img1}
-                            alt="image"
-                            className="w-full h-full object-cover rounded-3xl"
-                          />
-                        </div>
-        </div>
-        <div className="w-full max-w-2xl h-full flex items-center">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-8 sm:p-10 relative overflow-hidden w-full h-full flex flex-col justify-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-purple-500/10 rounded-3xl"></div>
-            
-            <div className="relative z-10">
-              <div className="mb-8 text-center">
-                <div className="inline-block p-4 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full mb-4 shadow-lg animate-bounce">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                  </svg>
-                </div>
-                <h1 className="text-4xl font-extrabold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent tracking-tight mb-2">
-                  Sign In
-                </h1>
-                <p className="text-white/70 text-sm">
-                  Welcome back to <span className="text-purple-300 font-semibold">Chatify</span>
-                </p>
-              </div>
+    <div className="bg-gradient-to-br from-slate-50 to-blue-100 min-h-screen overflow-x-hidden relative">
+      <div 
+        className="absolute inset-0 bg-gradient-to-br from-teal-600 via-teal-700 to-teal-900 z-0"
+        style={{
+          clipPath: 'polygon(0 0, 100% 0%, 100% 60%, 20% 100%, 0 85%)',
+          animation: 'waveFloat 6s ease-in-out infinite'
+        }}
+      />
+      
+      <style jsx>{`
+        @keyframes waveFloat {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(0.5deg); }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-5px); }
+        }
+        
+        .floating-animation {
+          animation: float 4s ease-in-out infinite;
+        }
+        
+        .gradient-text {
+          background: linear-gradient(135deg, #ffffff 0%, #4ecdc4 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+      `}</style>
 
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
+        <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          
+          <div className="text-white space-y-6">
+            <div className="text-3xl font-bold text-teal-300 mb-12 flex items-center gap-3">
+              <div className="bg-white rounded-lg p-2 hover:scale-110 delay-100 duration-300 ease-in-out">
+                <MessageCircle color="#008479" fill="#008479"/>
+              </div>
+              Chatify
+            </div>
+            
+            <h1 className="text-5xl lg:text-6xl font-bold leading-tight gradient-text">
+              Welcome Back to Chatify
+            </h1>
+            
+            <p className="text-xl text-teal-100 leading-relaxed max-w-lg">
+              Continue your conversations where you left off. Sign in to reconnect with friends and access all your chats instantly.
+            </p>
+            
+            <ul className="space-y-4 text-lg">
+              {features.map((feature, index) => (
+                <li key={index} className="flex items-center space-x-3 group">
+                  <div className="w-6 h-6 bg-teal-400 rounded-full flex items-center justify-center group-hover:bg-teal-300 transition-colors">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-teal-50 group-hover:text-white transition-colors">
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            
+            <div className="pt-6">
+              <button 
+                onClick={() => navigate("/register")}
+                className="inline-flex items-center text-teal-300 hover:text-teal-200 font-semibold text-lg border-b-2 border-transparent hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 group"
+              >
+                New to Chatify? Create an account
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="floating-animation">
+            <div className="bg-white rounded-2xl p-8 shadow-2xl backdrop-blur-sm border border-white/20">
+
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-teal-700 mb-2">Sign In</h2>
+                <p className="text-gray-600">Access your account and continue chatting</p>
+              </div>
+              
               <div className="space-y-6">
                 <div className="relative">
-                  <label className="block mb-2 text-sm font-medium text-white/90">Email address</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                      </svg>
-                    </div>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      onFocus={() => setFocusedField('email')}
-                      onBlur={() => setFocusedField('')}
-                      placeholder="you@chatify.com"
-                      className={`w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300 ${
-                        focusedField === 'email' ? 'bg-white/20 shadow-lg transform scale-105' : ''
-                      }`}
-                    />
-                  </div>
+                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <input 
+                    type="email" 
+                    name="email"
+                    placeholder="Email Address" 
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                    required
+                  />
                 </div>
-
+                
                 <div className="relative">
-                  <label className="block mb-2 text-sm font-medium text-white/90">Password</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                    </div>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      onFocus={() => setFocusedField('password')}
-                      onBlur={() => setFocusedField('')}
-                      placeholder="••••••••"
-                      className={`w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300 ${
-                        focusedField === 'password' ? 'bg-white/20 shadow-lg transform scale-105' : ''
-                      }`}
-                    />
-                  </div>
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <input 
+                    type="password" 
+                    name="password"
+                    placeholder="Password" 
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                    required
+                  />
                 </div>
-
+                
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
+                  <div className="flex items-center space-x-2">
+                    <input 
+                      type="checkbox" 
+                      id="remember" 
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
-                      className="sr-only"
+                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                     />
-                    <div className={`w-5 h-5 border-2 border-white/30 rounded-md mr-3 flex items-center justify-center transition-all duration-300 ${rememberMe ? 'bg-purple-500 border-purple-500' : 'bg-white/10'}`}>
-                      {rememberMe && (
-                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    <span className="text-sm text-white/70">Remember me</span>
-                  </label>
-                  
-                  <a 
-                    href="#" 
-                    className="text-sm text-purple-300 hover:text-purple-200 transition-colors duration-300 relative group"
+                    <label htmlFor="remember" className="text-sm text-gray-600">
+                      Remember me
+                    </label>
+                  </div>
+                  <button 
+                    type="button" 
+                    className="text-sm text-teal-600 hover:text-teal-500 font-semibold"
                   >
-                    <span className="relative z-10">Forgot password?</span>
-                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-purple-300 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                  </a>
+                    Forgot password?
+                  </button>
                 </div>
 
-                <button
-                  type="button"
+                <button 
+                  type="button" 
                   onClick={handleSubmit}
-                  className="w-full bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-medium py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 relative overflow-hidden group"
+                  disabled={!formData.email || !formData.password || isLoading}
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <span className="relative flex items-center justify-center">
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                    </svg>
-                    Sign In
-                  </span>
+                  {isLoading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Signing in...</span>
+                    </div>
+                  ) : (
+                    "Sign In"
+                  )}
                 </button>
-              </div>
 
-              <div className="mt-8 text-center">
-                <p className="text-white/60 text-sm">
-                  Don't have an account?{' '}
-                  <span
-                    onClick={()=>toggleAuthMode()}
-                    className="text-purple-300 font-medium hover:text-purple-200 transition-colors duration-300 relative group cursor-pointer"
-                  >
-                    <span className="relative z-10">Sign up</span>
-                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-purple-300 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-                  </span>
-                </p>
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">
+                    Don't have an account?{" "}
+                    <button 
+                      type="button" 
+                      onClick={() => navigate("/register")}
+                      className="text-teal-600 hover:text-teal-500 font-semibold"
+                    >
+                      Sign up here
+                    </button>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 };
 
