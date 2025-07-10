@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Register from "./Register";
 import Login from "./Login";
+import {useDispatch} from 'react-redux'
+import { loginUser, registerUser } from "../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const AuthLayout = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +15,9 @@ const AuthLayout = () => {
   const [focusedField, setFocusedField] = useState("");
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [rememberMe, setRememberMe] = useState(false);
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -39,12 +45,33 @@ const AuthLayout = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isLogin) {
-      console.log("Login submitted:", {
-        email: formData.email,
-        password: formData.password,
+      if( !formData.email || !formData.password ){
+        console.log("fill all the fields");
+        return;
+      }
+      dispatch(loginUser({email:formData.email, password:formData.password}))
+      .then((response) => {
+        if (response.payload.success) {
+          navigate("/u/");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred during login:", error);
       });
     } else {
-      console.log("Register submitted:", formData);
+      if( !formData.email || !formData.password || !formData.username ){
+        console.log("fill all the fields");
+        return;
+      }
+      dispatch(registerUser({email:formData.email, password:formData.password, username:formData.username}))
+      .then((response) => {
+        if (response.payload.success) {
+          navigate("/verify-email");
+        }
+      })
+      .catch((error) => {
+        console.log("error:", error);
+      });
     }
   };
 
