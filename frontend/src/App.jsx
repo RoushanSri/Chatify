@@ -4,6 +4,7 @@ import EmailVerify from "./pages/EmailVerify"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import MainLayout from "./pages/MainLayout"
+import UnAuthProtector from "./Components/UnAuthProtector"
 
 function App() {
 
@@ -13,7 +14,9 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/verify-email" element={<EmailVerify/>}/>
-        <Route path="/" element={<MainLayout/>}/>
+        <Route path="/u/" element={<UnAuthProtector>
+          <MainLayout/>
+          </UnAuthProtector>}/>
       </Routes>
     </>
   )
