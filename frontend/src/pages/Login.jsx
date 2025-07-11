@@ -3,12 +3,15 @@ import { useDispatch } from 'react-redux'
 import { loginUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Check, Mail, Lock, MessageCircle, ArrowRight } from 'lucide-react';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+    const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("userEmail");
@@ -168,6 +171,13 @@ const Login = () => {
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={()=>setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-600"
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
                 </div>
                 
                 <div className="flex items-center justify-between">

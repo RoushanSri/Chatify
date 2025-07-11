@@ -3,6 +3,7 @@ import {useDispatch} from 'react-redux'
 import { loginUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Check, Mail, Lock, User, MessageCircle  } from 'lucide-react';
+import {FaEyeSlash, FaEye} from 'react-icons/fa'
 
 const Register = () => {
 
@@ -11,6 +12,8 @@ const Register = () => {
     username: "",
     password: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const [ agreeToTerms, setAgreeToTerms ] = useState(false);
 
@@ -144,7 +147,7 @@ const Register = () => {
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <input 
-                    type="password" 
+                    type={showPassword ? "text" : "password"} 
                     name="password"
                     placeholder="Password" 
                     value={formData.password}
@@ -152,6 +155,13 @@ const Register = () => {
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                     required
                   />
+                  <button
+                  type="button"
+                  onClick={()=>setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-600"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
                 </div>
                 
                 <div className="flex items-start space-x-3">
