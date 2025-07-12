@@ -4,6 +4,7 @@ import connectDB from './config/db.js';
 import cors from "cors";
 import authRoutes from './routes/auth.route.js'
 import userRoutes from "./routes/user.routes.js"
+import messageRoutes from "./routes/message.routes.js"
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json())
 
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/message', messageRoutes)
 
 const PORT = process.env.PORT;
 

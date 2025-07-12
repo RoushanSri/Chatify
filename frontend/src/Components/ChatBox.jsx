@@ -4,43 +4,30 @@ import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { FiMessageCircle } from "react-icons/fi";
 import MessageContainer from './MessageContainer';
 import ChatHeader from './ChatHeader';
+import { useDispatch } from 'react-redux';
+import { getMessages, sendMessage } from '../redux/slices/messageSlice';
 
 const ChatBox=({
   currentUser
 }) => {
   const [inputValue, setInputValue] = useState('')
+  const [image, setImage] = useState("")
     const [messages, setMessages] = useState([])
 
+    const dispatch = useDispatch();
+
   useEffect(()=>{
-    setMessages([{
-      id: '1',
-      text: 'Hi there! 👋 Welcome to Chatify!',
-      sender: { id: 0, name: 'Alice' },
-      timestamp: new Date(Date.now() - 300000).toISOString(),
-      type: 'text'
-    },
-    {
-      id: '2',
-      text: 'Hello! Thanks for the warm welcome. This looks amazing!',
-      sender: { id: currentUser.id, name: 'You' },
-      timestamp: new Date(Date.now() - 240000).toISOString(),
-      type: 'text'
-    },
-    {
-      id: '3',
-      text: 'I\'m so glad you like it! The new design really captures the modern chat experience we were going for.',
-      sender: { id: 0, name: 'Alice' },
-      timestamp: new Date(Date.now() - 180000).toISOString(),
-      type: 'text'
-    },
-    {
-      id: '4',
-      text: 'Absolutely! The teal color scheme is perfect, and the animations make it feel so responsive.',
-      sender: { id: currentUser.id, name: 'You' },
-      timestamp: new Date(Date.now() - 120000).toISOString(),
-      type: 'text'
-    }])
-  },[currentUser])
+    if(currentUser){
+      const friendId=currentUser._id
+    dispatch(getMessages({friendId}))
+    .then((res)=>{
+      if (res.payload) {
+        setMessages(res.payload.messages);
+      }
+    })
+
+  }},[currentUser])
+
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
@@ -53,19 +40,13 @@ const ChatBox=({
 
   const handleSend = () => {
     if (inputValue.trim()) {
-        setMessages(prev => [...prev,{
-          id:Date.now().toString(),
-          text: inputValue,
-          sender:{id:currentUser.id, name:"You"},
-        timestamp: new Date().toISOString(),
-        type: 'text'
-        }, {
-        id: Date.now().toString(),
-        text: 'Thanks for your message! This is an automated response to show the chat functionality.',
-        sender: { id: 0, name: 'Alice' },
-        timestamp: new Date().toISOString(),
-        type: 'text'
-      }])
+        const friendId=currentUser._id
+        dispatch(sendMessage({friendId, text:inputValue, image}))
+        .then((res)=>{
+          if(res.payload && res.payload.message){            
+            setMessages(prev => [...prev, res.payload.message])
+          }
+        })
       setInputValue('')
     }
   }
@@ -82,7 +63,7 @@ const ChatBox=({
       <ChatHeader currentUser={currentUser}/>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
-        {messages.length === 0 ? (
+        {Array.isArray(messages) && messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
             <div className="w-16 h-16 bg-teal-100 text-teal-500 rounded-full flex items-center justify-center mb-4">
               <FiMessageCircle size={"1.8rem"}/>
@@ -90,7 +71,7 @@ const ChatBox=({
             <p className="text-center text-sm">No messages yet. Start the conversation!</p>
           </div>
         ) : (
-          messages.map((message) => (
+          (Array.isArray(messages) ? messages : []).map((message) => (
             <MessageContainer message={message} currentUser={currentUser}/>
           ))
         )}
@@ -128,3 +109,32 @@ const ChatBox=({
 }
 
 export default ChatBox
+
+    // setMessages([{
+    //   id: '1',
+    //   text: 'Hi there! 👋 Welcome to Chatify!',
+    //   sender: { id: 0, name: 'Alice' },
+    //   timestamp: new Date(Date.now() - 300000).toISOString(),
+    //   type: 'text'
+    // },
+    // {
+    //   id: '2',
+    //   text: 'Hello! Thanks for the warm welcome. This looks amazing!',
+    //   sender: { id: currentUser.id, name: 'You' },
+    //   timestamp: new Date(Date.now() - 240000).toISOString(),
+    //   type: 'text'
+    // },
+    // {
+    //   id: '3',
+    //   text: 'I\'m so glad you like it! The new design really captures the modern chat experience we were going for.',
+    //   sender: { id: 0, name: 'Alice' },
+    //   timestamp: new Date(Date.now() - 180000).toISOString(),
+    //   type: 'text'
+    // },
+    // {
+    //   id: '4',
+    //   text: 'Absolutely! The teal color scheme is perfect, and the animations make it feel so responsive.',
+    //   sender: { id: currentUser.id, name: 'You' },
+    //   timestamp: new Date(Date.now() - 120000).toISOString(),
+    //   type: 'text'
+    // }])
