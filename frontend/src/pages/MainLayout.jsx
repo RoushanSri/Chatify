@@ -5,6 +5,7 @@ import ChatContainer from "../Components/ChatContainer";
 import {useDispatch, useSelector} from "react-redux"
 import { logoutUser } from "../redux/slices/authSlice";
 import {useNavigate} from "react-router-dom"
+import { getSocket } from "../socket";
 
 function MainLayout() {
 
@@ -22,6 +23,10 @@ function MainLayout() {
 
     const LogOut = ()=>{
         dispatch(logoutUser())
+        const socket = getSocket();
+        if (socket?.connected) {
+            socket.disconnect();
+        }
         localStorage.removeItem("token")
         navigate("/login");
     }

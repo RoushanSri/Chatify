@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Messages from "../models/message.model.js";
 import ResponseError from "../types/ResponseError.js";
+import { getRecieverSocketId, io } from "../config/socket.js";
 
 export const getMessages = asyncHandler(async (req, res) => {
   const { friendId } = req.params;
@@ -53,6 +54,11 @@ export const sendMessage = asyncHandler(async (req, res) => {
       select: "username email",
     },
   });
+
+  const recieverSocketId = getRecieverSocketId(friendId);
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newMessage", newMessage);
+    }
 
   res.json({
     success: true,

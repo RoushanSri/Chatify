@@ -6,6 +6,7 @@ import MessageContainer from './MessageContainer';
 import ChatHeader from './ChatHeader';
 import { useDispatch } from 'react-redux';
 import { getMessages, sendMessage } from '../redux/slices/messageSlice';
+import { getSocket } from '../socket';
 
 const ChatBox=({
   currentUser
@@ -27,6 +28,27 @@ const ChatBox=({
     })
 
   }},[currentUser])
+
+  useEffect(() => {
+  const socket = getSocket();
+  if (!socket || !currentUser) return;
+
+  const handleNewMessage = (newMsg) => {
+        
+    if (
+      newMsg.senderId._id === currentUser._id || 
+      newMsg.recieverId === currentUser._id
+    ) {
+      console.log(newMsg);
+      
+      setMessages((prev) => [...prev, newMsg]);
+    }
+  };
+  socket.on("newMessage", handleNewMessage);
+  return () => {
+    socket.off("newMessage", handleNewMessage);
+  };
+}, [currentUser]);
 
   const messagesEndRef = useRef(null)
 
