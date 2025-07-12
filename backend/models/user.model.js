@@ -6,9 +6,16 @@ const UserSchema = new mongoose.Schema({
         ref: "Auth",
         required:true
     },
-    username:{
+    friends:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref: "User",
+        }
+    ],
+    bio: {
         type: String,
-        required: true
+        trim: true,
+        maxlength: 300
     }
 },{
     timestamps:true

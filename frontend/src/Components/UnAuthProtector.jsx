@@ -1,12 +1,15 @@
 import { Loader } from 'lucide-react';
 import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { getUserProfile } from '../redux/slices/userSlice';
 
 function UnAuthProtector({children}) {
 
+    const dispatch = useDispatch()
     const navigate = useNavigate()
-    const {loading} = useSelector((state)=>state.auth)
+    const {token} = useSelector((state)=>state.auth)
+    const {profile, loading} = useSelector(state=>state.user)
 
     const isLoading = loading
 
@@ -16,6 +19,17 @@ function UnAuthProtector({children}) {
             navigate("/login")
         }
     })
+
+    useEffect(() => {
+        if(!profile )
+            dispatch(getUserProfile()).then((res) => {
+                if (res.error) {
+                    localStorage.removeItem("token");
+                    navigate("/login");
+                }
+            });
+        
+    }, [ profile, token ]);
 
   return (
     <>
