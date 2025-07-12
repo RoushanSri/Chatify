@@ -7,7 +7,14 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
   const user = await Users.findById(id)
     .populate("auth", "-password")
-    .populate("friends", "auth bio");
+    .populate({
+        path: "friends",
+        select: "auth bio",
+        populate: {
+          path: "auth",
+          select: "username email",
+        }
+      });
 
   if (!user) throw new ResponseError("User does not exist", 404);
 

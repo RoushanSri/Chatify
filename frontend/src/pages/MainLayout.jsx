@@ -1,8 +1,8 @@
 import { MessageCircle } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserBox from "../Components/UserBox";
 import ChatContainer from "../Components/ChatContainer";
-import {useDispatch} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import { logoutUser } from "../redux/slices/authSlice";
 import {useNavigate} from "react-router-dom"
 
@@ -10,14 +10,13 @@ function MainLayout() {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const {profile} = useSelector(state=>state.user)
 
-    const users = Array.from({ length: 25 }, (_, i) => ({
-        id: i + 1,
-        name: `User ${i + 1}`,
-        lastMessage: `Last message from User ${i + 1}`,
-        online: Math.random() > 0.5,
-        bio:`Hey Bio ${i+1}`
-    }));
+    const [friends, setfriends] = useState([])
+
+    useEffect(()=>{
+        setfriends(profile?.friends)
+    },[profile])
 
     const [currentUser, setCurrentUser] = useState(null)
 
@@ -53,7 +52,7 @@ return (
         <div className="flex-1 flex min-h-0">
             <div className="flex flex-col bg-gradient-to-br from-teal-600 via-teal-700 to-teal-900 w-1/4 p-5 overflow-y-auto min-h-0">
                 {
-                    users.map((user, idx) => (
+                    friends.map((user, idx) => (
                         <UserBox user={user} key={user.id} setCurrentUser={setCurrentUser} currentUser={currentUser}/>
                     ))
                 }

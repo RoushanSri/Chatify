@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {useDispatch} from 'react-redux'
-import { loginUser } from "../redux/slices/authSlice";
+import { loginUser, registerUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Check, Mail, Lock, User, MessageCircle  } from 'lucide-react';
 import {FaEyeSlash, FaEye} from 'react-icons/fa'
@@ -26,14 +26,14 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-      if( !formData.email || !formData.password ){
+      if( !formData.email || !formData.password || !formData.username ){
         console.log("fill all the fields");
         return;
       }
-      dispatch(loginUser({email:formData.email, password:formData.password}))
+      dispatch(registerUser({email:formData.email, password:formData.password, username:formData.username}))
       .then((response) => {
         if (response.payload.success) {
-          navigate("/u/");
+          navigate("/verify-email");
         }
       })
       .catch((error) => {

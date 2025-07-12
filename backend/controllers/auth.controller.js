@@ -104,7 +104,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
     throw new ResponseError("User registration failed", 500);
   }
 
-  const redirectUrl = `http://localhost:5173/`;
+  const redirectUrl = `http://localhost:5173/login`;
   res.redirect(redirectUrl);
 
   res.json({

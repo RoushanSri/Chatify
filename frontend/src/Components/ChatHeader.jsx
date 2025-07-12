@@ -36,7 +36,7 @@ const ChatHeader = ({currentUser}) => {
       <div className="flex items-center gap-3">
           <Avatar alt="Remy Sharp" src={img} />
         <div>
-          <h3 className="font-bold text-lg">{currentUser.name}</h3>
+          <h3 className="font-bold text-lg">{currentUser.auth.username}</h3>
           <p className="text-xs text-teal-100">{currentUser.bio}</p>
         </div>
       </div>
