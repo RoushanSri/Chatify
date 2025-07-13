@@ -21,10 +21,10 @@ export const getMessages = createAsyncThunk(
 
 export const sendMessage = createAsyncThunk(
     "message/sendMessage",
-    async({friendId, text, image},{rejectWithValue})=>{
+    async({friendId, text, image, replyId},{rejectWithValue})=>{
         try {
             const token = localStorage.getItem("token")
-            const response = await axiosInstance.post(`/message/send/${friendId}`, { text, image }, {
+            const response = await axiosInstance.post(`/message/send/${friendId}`, { text, image, replyId }, {
                 headers:{
                     Authorization: `Bearer ${token}`
                 }

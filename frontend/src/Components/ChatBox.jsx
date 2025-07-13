@@ -13,7 +13,8 @@ const ChatBox=({
 }) => {
   const [inputValue, setInputValue] = useState('')
   const [image, setImage] = useState("")
-    const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState([])
+  const [replyTo, setReplyTo] = useState(null);
 
     const dispatch = useDispatch();
 
@@ -39,7 +40,6 @@ const ChatBox=({
       newMsg.senderId._id === currentUser._id || 
       newMsg.recieverId === currentUser._id
     ) {
-      console.log(newMsg);
       
       setMessages((prev) => [...prev, newMsg]);
     }
@@ -63,13 +63,14 @@ const ChatBox=({
   const handleSend = () => {
     if (inputValue.trim()) {
         const friendId=currentUser._id
-        dispatch(sendMessage({friendId, text:inputValue, image}))
+        dispatch(sendMessage({friendId, text:inputValue, image, replyId:replyTo?replyTo._id:null}))
         .then((res)=>{
           if(res.payload && res.payload.message){            
             setMessages(prev => [...prev, res.payload.message])
           }
         })
       setInputValue('')
+      setReplyTo(null)
     }
   }
 
@@ -78,6 +79,10 @@ const ChatBox=({
       e.preventDefault()
       handleSend()
     }
+  }
+
+  const onReply=(message)=>{
+    setReplyTo(message)
   }
 
   return (  
@@ -94,7 +99,7 @@ const ChatBox=({
           </div>
         ) : (
           (Array.isArray(messages) ? messages : []).map((message) => (
-            <MessageContainer message={message} currentUser={currentUser}/>
+            <MessageContainer message={message} currentUser={currentUser} onReply={onReply}/>
           ))
         )}
         
@@ -103,19 +108,41 @@ const ChatBox=({
 
       <div className="px-6 py-4 bg-gradient-to-r from-teal-50 to-white border-t border-teal-100">
         <div className="flex items-center gap-3">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              placeholder="Type your message..."
-            />
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <MdOutlineEmojiEmotions size={"1.5rem"}/>
+          <div className="flex-1 relative flex flex-col gap-1">
+            {replyTo && (
+                <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-teal-50 border-l-4 border-teal-500 text-sm text-gray-800">
+                  <div className="overflow-hidden">
+                    <p className="text-xs font-semibold text-teal-700">
+                      Replying to {replyTo.senderId?.auth?.username || "Unknown"}
+                    </p>
+                    <p className="truncate max-w-[250px] text-xs italic">
+                      {replyTo.text || "[Image]"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setReplyTo(null)}
+                    className="ml-2 text-gray-400 hover:text-red-500"
+                    title="Cancel reply"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  placeholder="Type your message..."
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <MdOutlineEmojiEmotions size={"1.5rem"} />
+                </div>
+              </div>
             </div>
-           </div>
+
           <button
             onClick={handleSend}
             disabled={!inputValue.trim()}

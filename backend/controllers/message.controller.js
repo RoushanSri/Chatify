@@ -15,13 +15,22 @@ export const getMessages = asyncHandler(async (req, res) => {
       { senderId: userId, recieverId: friendId },
       { senderId: friendId, recieverId: userId },
     ],
-  }).populate({
+  }).populate([{
     path: "senderId",
     populate: {
       path: "auth",
       select: "username email",
     },
-  })
+  },{
+    path: "repliedTo",
+    populate: {
+      path: "senderId",
+      populate: {
+        path: "auth",
+        select: "username email",
+      },
+    },
+  }])
 
   res.status(200).json({
     success: true,
@@ -31,7 +40,7 @@ export const getMessages = asyncHandler(async (req, res) => {
 
 export const sendMessage = asyncHandler(async (req, res) => {
   const { friendId } = req.params;
-  const { text, image } = req.body;
+  const { text, image, replyId } = req.body;
   const userId = req.userId;
 
   let imageUrl;
@@ -43,17 +52,27 @@ export const sendMessage = asyncHandler(async (req, res) => {
   const message = await Messages.create({
     senderId: userId,
     recieverId: friendId,
+    repliedTo: replyId,
     text,
     image: imageUrl,
   });
 
-  const newMessage = await message.populate({
+  const newMessage = await message.populate([{
     path: "senderId",
     populate: {
       path: "auth",
       select: "username email",
     },
-  });
+  },{
+    path: "repliedTo",
+    populate: {
+      path: "senderId",
+      populate: {
+        path: "auth",
+        select: "username email",
+      },
+    },
+  }]);
 
   const recieverSocketId = getRecieverSocketId(friendId);
     if (recieverSocketId) {

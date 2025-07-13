@@ -14,6 +14,10 @@ const MessageSchema = new mongoose.Schema({
   text:{
     type: String
   },
+  repliedTo:{
+    type: mongoose.Schema.ObjectId,
+    ref: "Messages"
+  },
   image:{
     type:String
   }
