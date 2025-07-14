@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import Users from "../models/user.model.js";
 import ResponseError from "../types/ResponseError.js";
 import Auths from "../models/auth.model.js";
+import Requests from "../models/request.model.js";
 
 
 export const getUserProfile = asyncHandler(async (req, res) => {
@@ -51,10 +52,19 @@ export const addFriend = asyncHandler(async (req, res) => {
   friend.friends.push(userId)
   await friend.save()
 
+  await Requests.deleteMany({
+    $or: [
+      { senderId: userId, recieverId: friendId },
+      { senderId: friendId, recieverId: userId },
+    ],
+  });
+
+  const updatedUser = await Users.findById(userId).populate("friends", "auth bio");
+
   res.status(201).json({
     success: true,
     message: "Friend added successfully!",
-    data: user.friends,
+    data: updatedUser.friends,
   });
 });
 
@@ -65,22 +75,28 @@ export const searchUser = asyncHandler(async (req, res) => {
     throw new ResponseError("Email address is required", 400);
   }
 
-  const user = await Auths.findOne({ email }).select("-password");
+  const auth = await Auths.findOne({ email }).select("-password");
+  if (!auth) throw new ResponseError("User does not exist", 404);
 
-  if (!user) {
-    throw new ResponseError("User does not exist", 404);
-  }
+  const searchedUser = await Users.findOne({ auth: auth._id }).populate("auth");
+  if (!searchedUser) throw new ResponseError("User data not found", 404);
 
   const currentUser = await Users.findOne({ auth: req.authId }).populate("friends", "auth");
   
   const isFriend = currentUser.friends.some(
-    (friend) => friend.auth.toString() === user._id.toString()
-  );  
+    (friend) => friend.auth.toString() === searchedUser.auth._id.toString()
+  );
+
+  const alreadyRequested = await Requests.findOne({
+    senderId: currentUser._id,
+    recieverId: searchedUser._id,
+  });
 
   res.json({
     success: true,
-    user,
-    alreadyFriend:isFriend
+    user: searchedUser,
+    alreadyFriend: isFriend,
+    alreadyRequested: !!alreadyRequested,
   });
 });
 

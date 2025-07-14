@@ -7,6 +7,7 @@ import { logoutUser } from "../redux/slices/authSlice";
 import {useNavigate} from "react-router-dom"
 import { getSocket } from "../socket";
 import AddFriend from "../Components/AddFriend";
+import FriendRequests from "../Components/FriendRequests";
 
 function MainLayout() {
 
@@ -16,10 +17,15 @@ function MainLayout() {
 
     const [friends, setfriends] = useState([])
     const [addFriend, setAddFriend] = useState(false)
+    const [showRequests, setShowRequests] = useState(false);
 
-    useEffect(()=>{
-        setfriends(profile?.friends)
-    },[profile])
+    useEffect(() => {
+        if (Array.isArray(profile?.friends)) {
+            setfriends(profile.friends);
+        } else {
+            setfriends([]);
+        }
+    }, [profile]);
 
     const [currentUser, setCurrentUser] = useState(null)
 
@@ -46,6 +52,12 @@ return (
 
         <div className="flex gap-6 items-center">
         <button
+            onClick={() => setShowRequests(true)}
+            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300"
+        >
+            Friend Requests
+        </button>
+        <button
             onClick={() => setAddFriend(true)}
             className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300"
         >
@@ -67,7 +79,7 @@ return (
         <div className="flex-1 flex min-h-0 relative">
             <div className="flex flex-col bg-gradient-to-br from-teal-600 via-teal-700 to-teal-900 w-1/4 p-5 overflow-y-auto min-h-0">
                 {
-                    friends.map((user, idx) => (
+                   Array.isArray(friends) && friends.map((user, idx) => (
                         <UserBox user={user} key={user.id} setCurrentUser={setCurrentUser} currentUser={currentUser}/>
                     ))
                 }
@@ -77,6 +89,9 @@ return (
             </div>
             {
                 addFriend && (<div className="absolute top-1/2 left-1/2"><AddFriend onClose={()=>setAddFriend(false)}/></div>)
+            }
+            {
+                showRequests && (<div className="absolute top-1/2 left-1/2"><FriendRequests onClose={()=>setShowRequests(false)}/></div>)
             }
         </div>
     </div>

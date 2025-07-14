@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { axiosInstance } from "../lib/axiosIntance";
 import { UserPlus } from "lucide-react"
+import { useDispatch, useSelector } from "react-redux";
 
 function AddFriend({ onClose }) {
   const [email, setEmail] = useState("");
   const [searchedUser, setSearchedUser] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const {profile} = useSelector(state=>state.user)
 
   const handleSearch = async () => {
     try {
@@ -28,9 +31,21 @@ function AddFriend({ onClose }) {
     }
   };
   
-  const handleAddFriend = async () => {
-    //Add freind logic
-    //socket.io
+  const handleSendRequest = async () => {
+    if(!searchedUser || !profile._id) return;
+      try{
+        const token = localStorage.getItem("token");
+        const res = await axiosInstance.post(`/request/sendRequest`, {
+           recieverId:searchedUser.user._id
+        }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      }catch(e){
+        console.log(e);
+        
+      }
   };
 
   return (
@@ -69,23 +84,23 @@ function AddFriend({ onClose }) {
         {searchedUser && (
           <div className="flex items-center gap-4 border rounded-xl p-4 bg-white shadow-md">
             <div className="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center text-xl font-bold">
-              {searchedUser.user.username?.charAt(0).toUpperCase()}
+              {searchedUser.user.auth.username?.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1">
-              <p className="text-lg font-semibold">{searchedUser.user.username}</p>
-              <p className="text-sm text-gray-600">{searchedUser.user.email}</p>
+              <p className="text-lg font-semibold">{searchedUser.user.auth.username}</p>
+              <p className="text-sm text-gray-600">{searchedUser.user.auth.email}</p>
             </div>
             <button
-  onClick={handleAddFriend}
-  disabled={searchedUser.alreadyFriend}
+  onClick={handleSendRequest}
+  disabled={searchedUser.alreadyFriend || searchedUser.alreadyRequested}
   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
-    searchedUser.alreadyFriend
+    searchedUser.alreadyFriend || searchedUser.alreadyRequested
       ? "bg-gray-400 cursor-not-allowed"
       : "bg-teal-600 hover:bg-teal-700 text-white"
   }`}
 >
   <UserPlus className="w-5 h-5" />
-  {searchedUser.alreadyFriend ? "Already Friends" : "Send Request"}
+  {searchedUser.alreadyFriend ? "Already Friends" : searchedUser.alreadyRequested?"Pending Request":"Send Request"}
 </button>
           </div>
         )}
