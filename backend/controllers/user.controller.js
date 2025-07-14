@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import Users from "../models/user.model.js";
 import ResponseError from "../types/ResponseError.js";
+import Auths from "../models/auth.model.js";
+
 
 export const getUserProfile = asyncHandler(async (req, res) => {
   const id = req.userId;
@@ -55,3 +57,30 @@ export const addFriend = asyncHandler(async (req, res) => {
     data: user.friends,
   });
 });
+
+export const searchUser = asyncHandler(async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    throw new ResponseError("Email address is required", 400);
+  }
+
+  const user = await Auths.findOne({ email }).select("-password");
+
+  if (!user) {
+    throw new ResponseError("User does not exist", 404);
+  }
+
+  const currentUser = await Users.findOne({ auth: req.authId }).populate("friends", "auth");
+  
+  const isFriend = currentUser.friends.some(
+    (friend) => friend.auth.toString() === user._id.toString()
+  );  
+
+  res.json({
+    success: true,
+    user,
+    alreadyFriend:isFriend
+  });
+});
+

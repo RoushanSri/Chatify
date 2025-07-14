@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux"
 import { logoutUser } from "../redux/slices/authSlice";
 import {useNavigate} from "react-router-dom"
 import { getSocket } from "../socket";
+import AddFriend from "../Components/AddFriend";
 
 function MainLayout() {
 
@@ -14,6 +15,7 @@ function MainLayout() {
     const {profile} = useSelector(state=>state.user)
 
     const [friends, setfriends] = useState([])
+    const [addFriend, setAddFriend] = useState(false)
 
     useEffect(()=>{
         setfriends(profile?.friends)
@@ -42,6 +44,13 @@ return (
             Chatify
         </div>
 
+        <div className="flex gap-6 items-center">
+        <button
+            onClick={() => setAddFriend(true)}
+            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300"
+        >
+            Add Friend
+        </button>
         <button
             onClick={() => {
                 LogOut()
@@ -50,11 +59,12 @@ return (
         >
             Logout
         </button>
+        </div>
     </div>
 </div>
 
 
-        <div className="flex-1 flex min-h-0">
+        <div className="flex-1 flex min-h-0 relative">
             <div className="flex flex-col bg-gradient-to-br from-teal-600 via-teal-700 to-teal-900 w-1/4 p-5 overflow-y-auto min-h-0">
                 {
                     friends.map((user, idx) => (
@@ -65,6 +75,9 @@ return (
             <div className="flex-1 overflow-y-auto min-h-0">
                 <ChatContainer currentUser={currentUser}/>
             </div>
+            {
+                addFriend && (<div className="absolute top-1/2 left-1/2"><AddFriend onClose={()=>setAddFriend(false)}/></div>)
+            }
         </div>
     </div>
 );
