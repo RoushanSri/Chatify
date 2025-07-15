@@ -8,6 +8,7 @@ import {useNavigate} from "react-router-dom"
 import { getSocket } from "../socket";
 import AddFriend from "../Components/AddFriend";
 import FriendRequests from "../Components/FriendRequests";
+import { incrementRequestCount } from "../redux/slices/requestSlice";
 
 function MainLayout() {
 
@@ -27,6 +28,22 @@ function MainLayout() {
             setfriends([]);
         }
     }, [profile]);
+
+    useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleNewRequest = (request) => {
+      console.log("📩 New friend request received:", request);
+      dispatch(incrementRequestCount())
+    };
+
+    socket.on("newRequest", handleNewRequest);
+
+    return () => {
+      socket.off("newRequest", handleNewRequest);
+    };
+  }, []);
 
     const [currentUser, setCurrentUser] = useState(null)
 

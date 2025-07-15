@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRequest, fetchRequestCount } from "../redux/slices/requestSlice.js";
+import { decrementRequestCount, fetchRequest } from "../redux/slices/requestSlice.js";
 import Button from "@mui/material/Button";
 import { addFriend } from "../redux/slices/userSlice.js";
 
@@ -19,7 +19,7 @@ function FriendRequests({ onClose }) {
         if(res.error){
           console.log("error while accepting the request");
         }
-        dispatch(fetchRequestCount())
+        dispatch(decrementRequestCount())
       }
       )
     }

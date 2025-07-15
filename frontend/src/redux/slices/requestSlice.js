@@ -45,6 +45,14 @@ const requestSlice = createSlice({
     requests: [],
     count: 0
   },
+  reducers: {
+  incrementRequestCount: (state) => {
+    state.count += 1;
+  },
+  decrementRequestCount: (state) => {
+    state.count -= 1;
+  }
+  },
   extraReducers: (builder) =>
     builder
       .addCase(fetchRequest.pending, (state) => {
@@ -53,7 +61,9 @@ const requestSlice = createSlice({
       })
       .addCase(fetchRequest.fulfilled, (state, action) => {
         state.loading = false;
-        state.requests = action.payload.requests;
+        const requests=action.payload.requests
+        state.requests = requests;
+        state.count= requests.length
       })
       .addCase(fetchRequest.rejected, (state, action) => {
         state.loading = false;
@@ -74,4 +84,5 @@ const requestSlice = createSlice({
 
 });
 
+export const {incrementRequestCount, decrementRequestCount} =requestSlice.actions
 export default requestSlice.reducer;

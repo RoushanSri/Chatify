@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import ResponseError from "../types/ResponseError.js";
 import Requests from "../models/request.model.js";
+import { getRecieverSocketId, io } from "../config/socket.js";
 
 export const sendRequest = asyncHandler(async (req, res) => {
   const { recieverId } = req.body;
@@ -24,7 +25,10 @@ export const sendRequest = asyncHandler(async (req, res) => {
 
   const newRequest = request.populate("senderId recieverId");
 
-  console.log(newRequest);
+  const recieverSocketId = getRecieverSocketId(recieverId);
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newRequest", newRequest);
+    }
 
   res.json({
     success: true,
