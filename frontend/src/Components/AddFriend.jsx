@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { axiosInstance } from "../lib/axiosIntance";
 import { UserPlus } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 function AddFriend({ onClose }) {
   const [email, setEmail] = useState("");
@@ -12,6 +13,10 @@ function AddFriend({ onClose }) {
   const {profile} = useSelector(state=>state.user)
 
   const handleSearch = async () => {
+    if(email==profile.auth.email){
+      toast.error("Email same as yours")
+      return
+    }
     try {
       setError("");
       setSuccess("");
@@ -33,6 +38,7 @@ function AddFriend({ onClose }) {
   
   const handleSendRequest = async () => {
     if(!searchedUser || !profile._id) return;
+    const toastId = toast.loading("Sending Friend request")
       try{
         const token = localStorage.getItem("token");
         const res = await axiosInstance.post(`/request/sendRequest`, {
@@ -42,9 +48,14 @@ function AddFriend({ onClose }) {
           Authorization: `Bearer ${token}`,
         },
       });
+      toast.success("Request sent Successfully!!",{
+        id:toastId
+      })
       }catch(e){
         console.log(e);
-        
+        toast.error("Error while sending error!!",{
+          id:toastId
+        })
       }
   };
 

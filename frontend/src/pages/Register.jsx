@@ -4,6 +4,7 @@ import { loginUser, registerUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Check, Mail, Lock, User, MessageCircle  } from 'lucide-react';
 import {FaEyeSlash, FaEye} from 'react-icons/fa'
+import toast from "react-hot-toast";
 
 const Register = () => {
 
@@ -30,14 +31,21 @@ const Register = () => {
         console.log("fill all the fields");
         return;
       }
+      const toastId = toast.loading("Sending Email..")
       dispatch(registerUser({email:formData.email, password:formData.password, username:formData.username}))
       .then((response) => {
         if (response.payload.success) {
           navigate("/verify-email");
+          toast.success("Email sent!!",{
+            id:toastId
+          })
         }
       })
       .catch((error) => {
         console.error("An error occurred during login:", error);
+        toast.error(`${error}`,{
+          id:toastId
+        })
       });
     };
 
@@ -187,7 +195,7 @@ const Register = () => {
                   className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors transform hover:scale-105 duration-200 disabled:opacity-50"
                   disabled={!agreeToTerms}
                 >
-                  Start Free Trial
+                  Register
                 </button>
                 
                 <p className="text-xs text-gray-500 text-center leading-relaxed">

@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { removeFriend } from "../redux/slices/userSlice";
+import toast from "react-hot-toast";
 
 function UserBox({ user, setCurrentUser, currentUser }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,8 +26,18 @@ function UserBox({ user, setCurrentUser, currentUser }) {
   };
 
   const handleRemoveFriend = () => {
+    const toastId = toast.loading("Removing friend!!")
     handleMenuClose();
     dispatch(removeFriend({friendId:user._id}))
+    .then((res)=>{
+      if(res.error)
+        toast.error("Error while removing friend",{
+        id:toastId
+      })
+      toast.success("Friend Removed Successfully!!",{
+        id:toastId
+      })
+    })
   };
   return (
     <div

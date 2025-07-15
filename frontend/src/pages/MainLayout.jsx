@@ -9,6 +9,7 @@ import { getSocket } from "../socket";
 import AddFriend from "../Components/AddFriend";
 import FriendRequests from "../Components/FriendRequests";
 import { incrementRequestCount } from "../redux/slices/requestSlice";
+import toast from "react-hot-toast";
 
 function MainLayout() {
 
@@ -34,7 +35,7 @@ function MainLayout() {
     if (!socket) return;
 
     const handleNewRequest = (request) => {
-      console.log("📩 New friend request received:", request);
+      toast.success("New Request!!")
       dispatch(incrementRequestCount())
     };
 
@@ -48,12 +49,16 @@ function MainLayout() {
     const [currentUser, setCurrentUser] = useState(null)
 
     const LogOut = ()=>{
+        const toastId = toast.loading("Logging Out...")
         dispatch(logoutUser())
         const socket = getSocket();
         if (socket?.connected) {
             socket.disconnect();
         }
         localStorage.removeItem("token")
+        toast.success("Logged Out successfully",{
+            id:toastId
+        })
         navigate("/login");
     }
 

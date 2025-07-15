@@ -4,6 +4,7 @@ import { loginUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Check, Mail, Lock, MessageCircle, ArrowRight } from 'lucide-react';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -37,13 +38,16 @@ const Login = () => {
       console.log("Please fill all the fields");
       return;
     }
-    
+    const toastId=toast.loading("Signing in...")
     setIsLoading(true);
     dispatch(loginUser({ email: formData.email, password: formData.password }))
       .then((response) => {
         if (response.payload.success) {
           if (rememberMe)
             localStorage.setItem("userEmail", formData.email);
+          toast.success("Signed In!!",{
+            id:toastId
+          })
           navigate("/u/");
         }
       })
