@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { getUserProfile } from '../redux/slices/userSlice';
+import { fetchRequestCount } from '../redux/slices/requestSlice';
 
 function UnAuthProtector({children}) {
 
@@ -27,6 +28,7 @@ function UnAuthProtector({children}) {
                     localStorage.removeItem("token");
                     navigate("/login");
                 }
+                dispatch(fetchRequestCount());
             });
         
     }, [ profile, token ]);

@@ -48,3 +48,16 @@ export const fetchRequest = asyncHandler(async (req, res) => {
     requests,
   });
 });
+
+export const fetchRequestCount = asyncHandler(async(req, res)=>{
+  const recieverId = req.userId
+
+  const count = await Requests.countDocuments({
+    recieverId
+  });
+
+  res.json({
+    success:true,
+    count
+  })
+})
