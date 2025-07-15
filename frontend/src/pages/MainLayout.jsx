@@ -80,7 +80,7 @@ return (
             <div className="flex flex-col bg-gradient-to-br from-teal-600 via-teal-700 to-teal-900 w-1/4 p-5 overflow-y-auto min-h-0">
                 {
                    Array.isArray(friends) && friends.map((user, idx) => (
-                        <UserBox user={user} key={user.id} setCurrentUser={setCurrentUser} currentUser={currentUser}/>
+                        <UserBox user={user} key={user._id} setCurrentUser={setCurrentUser} currentUser={currentUser}/>
                     ))
                 }
             </div>

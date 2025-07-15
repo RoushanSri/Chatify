@@ -1,8 +1,33 @@
 import Avatar from "@mui/material/Avatar";
 import React from "react";
 import img from "../assets/noImage.webp"
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import IconButton from "@mui/material/IconButton";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { removeFriend } from "../redux/slices/userSlice";
 
 function UserBox({ user, setCurrentUser, currentUser }) {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const dispatch = useDispatch()
+
+  const handleMenuOpen = (event) => {
+    event.stopPropagation()
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleRemoveFriend = () => {
+    handleMenuClose();
+    dispatch(removeFriend({friendId:user._id}))
+  };
   return (
     <div
       onClick={() => setCurrentUser(user)}
@@ -23,6 +48,55 @@ function UserBox({ user, setCurrentUser, currentUser }) {
             {user.unreadCount}
           </span>
         )}
+        <div onClick={(e) => e.stopPropagation()}>
+          <IconButton
+            size="small"
+            onClick={handleMenuOpen}
+            aria-controls={open ? "user-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+          >
+            <MoreVertIcon className="text-white" />
+          </IconButton>
+          <Menu
+            id="user-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            onClick={(e) => e.stopPropagation()}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            PaperProps={{
+              sx: {
+                backgroundColor: "#1f2937",
+                color: "white",
+                borderRadius: 2,
+                mt: 1,
+                minWidth: 160,
+                boxShadow:
+                  "0px 4px 12px rgba(0, 0, 0, 0.2)",
+              },
+            }}
+          >
+            <MenuItem
+              onClick={handleRemoveFriend}
+              sx={{
+                "&:hover": {
+                  backgroundColor: "#14b8a6",
+                  color: "white",
+                },
+              }}
+            >
+              Remove Friend
+            </MenuItem>
+          </Menu>
+        </div>
       </div>
     </div>
   );

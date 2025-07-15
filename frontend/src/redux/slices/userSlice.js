@@ -35,6 +35,23 @@ export const addFriend = createAsyncThunk(
   }
 );
 
+export const removeFriend = createAsyncThunk(
+  "user/removeFriend",
+  async({friendId},{rejectWithValue})=>{
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.delete(`/user/removeFriend?friendId=${friendId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+)
+
 const initialState = {
   loading: false,
   error: null,
@@ -63,10 +80,25 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(addFriend.fulfilled, (state, action) => {
-        state.profile.friends = action.payload;
+        state.profile.friends = action.payload.data;
         state.loading = false;
       })
       .addCase(addFriend.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(removeFriend.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(removeFriend.fulfilled, (state, action) => {
+        const removedId = action.payload.friendId;
+        state.profile.friends = state.profile.friends.filter(
+          (friend) => friend._id !== removedId
+        );
+        state.loading = false;
+      })
+      .addCase(removeFriend.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

@@ -59,7 +59,15 @@ export const addFriend = asyncHandler(async (req, res) => {
     ],
   });
 
-  const updatedUser = await Users.findById(userId).populate("friends", "auth bio");
+  const updatedUser = await Users.findById(userId).populate("auth", "-password")
+    .populate({
+        path: "friends",
+        select: "auth bio",
+        populate: {
+          path: "auth",
+          select: "username email",
+        }
+      });
 
   res.status(201).json({
     success: true,
@@ -100,3 +108,26 @@ export const searchUser = asyncHandler(async (req, res) => {
   });
 });
 
+export const removeFriend = asyncHandler(async (req, res) => {
+  const { friendId } = req.query;
+  const userId = req.userId;
+
+  if (!friendId) {
+    throw new ResponseError("Friend ID is required", 400);
+  }
+
+  const user = await Users.findById(userId);
+  const friend = await Users.findById(friendId);
+
+  if (!user || !friend) {
+    throw new ResponseError("User or Friend not found", 404);
+  }
+
+  user.friends = user.friends.filter(id => id.toString() !== friendId);
+  await user.save();
+
+  friend.friends = friend.friends.filter(id => id.toString() !== userId);
+  await friend.save();
+
+  res.status(200).json({ success: true, message: "Friend removed successfully", friendId });
+});
