@@ -16,6 +16,10 @@ const groupSchema = new mongoose.Schema(
                 ref:"User"
             }
         ],
+        isGroup:{
+            type:Boolean,
+            default:true
+        },
         createdBy:{
             type:mongoose.Schema.ObjectId,
             ref:"User"

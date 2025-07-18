@@ -14,7 +14,7 @@ import {
 import Avatar from '@mui/material/Avatar';
 import img from "../assets/noImage.webp"
 
-const ChatHeader = ({currentUser}) => {
+const ChatHeader = ({currentUser, currentGroup}) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
 
@@ -36,8 +36,8 @@ const ChatHeader = ({currentUser}) => {
       <div className="flex items-center gap-3">
           <Avatar alt="Remy Sharp" src={img} />
         <div>
-          <h3 className="font-bold text-lg">{currentUser.auth.username}</h3>
-          <p className="text-xs text-teal-100">{currentUser.bio}</p>
+          <h3 className="font-bold text-lg">{currentUser?currentUser.auth.username:currentGroup.name}</h3>
+          <p className="text-xs text-teal-100">{currentUser?currentUser.bio:"Group"}</p>
         </div>
       </div>
 

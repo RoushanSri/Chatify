@@ -3,10 +3,10 @@ import { axiosInstance } from "../../lib/axiosIntance.js";
 
 export const getMessages = createAsyncThunk(
     "message/getMessages",
-    async({friendId},{rejectWithValue})=>{
+    async({id, type},{rejectWithValue})=>{
         try {
             const token = localStorage.getItem("token")
-            const response = await axiosInstance.get(`/message/${friendId}`,{
+            const response = await axiosInstance.get(`/message/${type}/${id}`,{
                 headers:{
                     Authorization: `Bearer ${token}`
                 }
@@ -21,10 +21,10 @@ export const getMessages = createAsyncThunk(
 
 export const sendMessage = createAsyncThunk(
     "message/sendMessage",
-    async({friendId, text, image, replyId},{rejectWithValue})=>{
+    async({id, type, text, image, replyId},{rejectWithValue})=>{
         try {
             const token = localStorage.getItem("token")
-            const response = await axiosInstance.post(`/message/send/${friendId}`, { text, image, replyId }, {
+            const response = await axiosInstance.post(`/message/send/${type}/${id}`, { text, image, replyId }, {
                 headers:{
                     Authorization: `Bearer ${token}`
                 }

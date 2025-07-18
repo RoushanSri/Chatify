@@ -11,6 +11,7 @@ import FriendRequests from "../Components/FriendRequests";
 import { incrementRequestCount } from "../redux/slices/requestSlice";
 import toast from "react-hot-toast";
 import CreateGroup from "../Components/CreateGroup";
+import GroupBox from "../Components/GroupBox";
 
 function MainLayout() {
 
@@ -20,6 +21,7 @@ function MainLayout() {
     const {count} = useSelector(state=>state.request)
 
     const [friends, setfriends] = useState([])
+    const [groupS, setGroups] = useState([])
     const [addFriend, setAddFriend] = useState(false)
     const [showRequests, setShowRequests] = useState(false);
     const [createGroup, setCreateGroup] = useState(false)
@@ -30,6 +32,10 @@ function MainLayout() {
         } else {
             setfriends([]);
         }
+        if(Array.isArray(profile?.groups))
+            setGroups(profile.groups)
+        else
+            setGroups([]);
     }, [profile]);
 
     useEffect(() => {
@@ -49,6 +55,7 @@ function MainLayout() {
   }, []);
 
     const [currentUser, setCurrentUser] = useState(null)
+    const [currentGroup, setCurrentGroup] = useState(null)
 
     const LogOut = ()=>{
         const toastId = toast.loading("Logging Out...")
@@ -111,13 +118,18 @@ return (
         <div className="flex-1 flex min-h-0 relative">
             <div className="flex flex-col bg-gradient-to-br from-teal-600 via-teal-700 to-teal-900 w-1/4 p-5 overflow-y-auto min-h-0">
                 {
+                    Array.isArray(groupS) && groupS.map((group, idx) => (
+                        <GroupBox group={group} key={group._id} currentGroup={currentGroup} setCurrentGroup={setCurrentGroup} setCurrentUser={setCurrentUser}/>
+                    ))
+                }
+                {
                    Array.isArray(friends) && friends.map((user, idx) => (
-                        <UserBox user={user} key={user._id} setCurrentUser={setCurrentUser} currentUser={currentUser}/>
+                        <UserBox user={user} key={user._id} setCurrentUser={setCurrentUser} currentUser={currentUser} setCurrentGroup={setCurrentGroup}/>
                     ))
                 }
             </div>
             <div className="flex-1 overflow-y-auto min-h-0">
-                <ChatContainer currentUser={currentUser}/>
+                <ChatContainer currentUser={currentUser} currentGroup={currentGroup}/>
             </div>
             {
                 addFriend && (<div className="absolute top-1/2 left-1/2"><AddFriend onClose={()=>setAddFriend(false)}/></div>)

@@ -8,7 +8,7 @@ import { getSocket } from '../socket';
 import SendMessage from './SendMessage';
 
 const ChatBox=({
-  currentUser
+  currentUser, currentGroup
 }) => {
   const [inputValue, setInputValue] = useState('')
   const [image, setImage] = useState("")
@@ -24,15 +24,23 @@ const ChatBox=({
 
   useEffect(()=>{
     if(currentUser){
-      const friendId=currentUser._id
-    dispatch(getMessages({friendId}))
+      const id=currentUser._id
+    dispatch(getMessages({id, type:"friend"}))
     .then((res)=>{
       if (res.payload) {
         setMessages(res.payload.messages);
       }
     })
-
-  }},[currentUser])
+    }
+    if(currentGroup){
+      const id=currentGroup._id
+    dispatch(getMessages({id, type:"group"}))
+    .then((res)=>{
+      if (res.payload) {
+        setMessages(res.payload.messages);
+      }
+    })
+  }},[currentUser, currentGroup])
 
   useEffect(() => {
   const socket = getSocket();
@@ -54,6 +62,23 @@ const ChatBox=({
   };
 }, [currentUser]);
 
+useEffect(() => {
+  const socket = getSocket();
+  if (!socket || !currentGroup) return;
+
+  const handleNewMessage = (newMsg) => {
+        
+    if (newMsg.groupId === currentGroup._id) {
+      setMessages((prev) => [...prev, newMsg.message]);
+    }
+  }
+
+  socket.on("newGroupMessage", handleNewMessage);
+  return () => {
+    socket.off("newGroupMessage", handleNewMessage);
+  };
+}, [currentGroup]);
+
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
@@ -65,19 +90,35 @@ const ChatBox=({
   }, [messages])
 
   const handleSend = () => {
-    if (inputValue.trim()) {
-        const friendId=currentUser._id
-        dispatch(sendMessage({friendId, text:inputValue, image, replyId:replyTo?replyTo._id:null}))
-        .then((res)=>{
-          if(res.payload && res.payload.message){            
-            setMessages(prev => [...prev, res.payload.message])
-          }
-        })
-      setShowPicker(false)
-      setInputValue('')
-      setReplyTo(null)
+  if (inputValue.trim()) {
+    const payload = {
+      text: inputValue,
+      image,
+      replyId: replyTo ? replyTo._id : null,
+    };
+
+    let type, id;
+
+    if (currentUser) {
+      type = "friend";
+      id = currentUser._id;
+    } else if (currentGroup) {
+      type = "group";
+      id = currentGroup._id;
     }
+
+    dispatch(sendMessage({ type, id, ...payload }))
+      .then((res) => {
+        if (res.payload && res.payload.message) {
+          setMessages((prev) => [...prev, res.payload.message]);
+        }
+      });
+
+    setShowPicker(false);
+    setInputValue('');
+    setReplyTo(null);
   }
+};
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -92,7 +133,7 @@ const ChatBox=({
 
   return (  
     <div className="flex flex-col bg-white w-full h-full transition-all duration-300 overflow-hidden">
-      <ChatHeader currentUser={currentUser}/>
+      <ChatHeader currentUser={currentUser} currentGroup={currentGroup}/>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
         {Array.isArray(messages) && messages.length === 0 ? (
@@ -104,7 +145,7 @@ const ChatBox=({
           </div>
         ) : (
           (Array.isArray(messages) ? messages : []).map((message) => (
-            <MessageContainer message={message} currentUser={currentUser} onReply={onReply}/>
+            <MessageContainer message={message} onReply={onReply}/>
           ))
         )}
         

@@ -1,9 +1,13 @@
 import { CornerUpLeft } from "lucide-react";
 import React from "react";
+import { useSelector } from "react-redux";
 
-function MessageContainer({ message, currentUser, onReply }) {
+function MessageContainer({ message, onReply }) {
+
+  const {profile} = useSelector(state=>state.user)
+
   const isCurrentUser = (sender) => {
-    return sender._id !== currentUser._id;
+    return sender._id == profile._id;
   };
 
   const formatTime = (timestamp) => {

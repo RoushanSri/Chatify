@@ -46,7 +46,7 @@ const groupSlice = createSlice({
     initialState:{
         loading:false,
         error:null,
-        groups:[]
+        group:null
     },
     extraReducers:(builder)=>
         builder
@@ -56,7 +56,7 @@ const groupSlice = createSlice({
             })
             .addCase(createGroup.fulfilled,(state, action)=>{
                 state.loading=false
-                state.groups.push(action.payload.group)
+                state.group=action.payload.group
             })
             .addCase(createGroup.rejected,(state, action)=>{
                 state.loading=false
@@ -68,13 +68,8 @@ const groupSlice = createSlice({
             })
             .addCase(addMember.fulfilled,(state, action)=>{
                 state.loading=false
-                const updatedGroup = action.payload.group;
-                const index = state.groups.findIndex(g => g._id === updatedGroup._id);
-                if (index !== -1) {
-                    state.groups[index] = updatedGroup;
-                } else {
-                    state.groups.push(updatedGroup);
-                }
+                state.group = action.payload.group;
+                
             })
             .addCase(addMember.rejected,(state, action)=>{
                 state.loading=false

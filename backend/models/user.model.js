@@ -17,7 +17,13 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         maxlength: 300,
         default:""
-    }
+    },
+    groups: [
+        { 
+            type: mongoose.Schema.ObjectId, 
+            ref: "Group" 
+        }
+    ],
 },{
     timestamps:true
 })

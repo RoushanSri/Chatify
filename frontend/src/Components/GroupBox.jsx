@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import { removeFriend } from "../redux/slices/userSlice";
 import toast from "react-hot-toast";
 
-function UserBox({ user, setCurrentUser, currentUser, setCurrentGroup }) {
+function GroupBox({ group, currentGroup, setCurrentUser, setCurrentGroup }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -25,44 +25,41 @@ function UserBox({ user, setCurrentUser, currentUser, setCurrentGroup }) {
     setAnchorEl(null);
   };
 
-  const handleRemoveFriend = () => {
-    const toastId = toast.loading("Removing friend!!")
-    handleMenuClose();
-    dispatch(removeFriend({friendId:user._id}))
-    .then((res)=>{
-      if(res.error)
-        toast.error("Error while removing friend",{
-        id:toastId
-      })
-      toast.success("Friend Removed Successfully!!",{
-        id:toastId
-      })
-    })
-  };
-
-  const handleClick = () =>{
-      setCurrentUser(user)
-      setCurrentGroup(null)
-  }
-    
+//   const handleRemoveFriend = () => {
+//     const toastId = toast.loading("Removing friend!!")
+//     handleMenuClose();
+//     dispatch(removeFriend({friendId:user._id}))
+//     .then((res)=>{
+//       if(res.error)
+//         toast.error("Error while removing friend",{
+//         id:toastId
+//       })
+//       toast.success("Friend Removed Successfully!!",{
+//         id:toastId
+//       })
+//     })
+//   };
   return (
     <div
-      onClick={() => handleClick()}
+      onClick={() => {
+        setCurrentUser(null)
+        setCurrentGroup(group)
+      }}
       className={`w-full ${
-        currentUser?._id === user._id ? "bg-teal-900" : ""
+        currentGroup?._id === group._id ? "bg-teal-900" : ""
       } text-white hover:bg-teal-800 transition-colors duration-200 rounded-lg cursor-pointer`}
     >
       <div className="flex w-full p-3 items-center gap-3">
             <Avatar src={img}/> 
         <div className="flex flex-col flex-1 min-w-0">
-          <span className="font-semibold truncate">{user.auth.username}</span>
+          <span className="font-semibold truncate">{group.name}</span>
           <p className="text-gray-300 text-sm truncate">
-            {user.bio || "Available"}
+            Group
           </p>
         </div>
-        {user.unreadCount > 0 && (
+        {group.unreadCount > 0 && (
           <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-            {user.unreadCount}
+            {group.unreadCount}
           </span>
         )}
         <div onClick={(e) => e.stopPropagation()}>
@@ -102,7 +99,7 @@ function UserBox({ user, setCurrentUser, currentUser, setCurrentGroup }) {
             }}
           >
             <MenuItem
-              onClick={handleRemoveFriend}
+            //   onClick={handleRemoveFriend}
               sx={{
                 "&:hover": {
                   backgroundColor: "#14b8a6",
@@ -119,4 +116,4 @@ function UserBox({ user, setCurrentUser, currentUser, setCurrentGroup }) {
   );
 }
 
-export default UserBox;
+export default GroupBox;

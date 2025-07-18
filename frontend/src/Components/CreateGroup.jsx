@@ -32,7 +32,7 @@ function CreateGroup({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createGroup({name:groupName, description, members:selectedMembers}))
-    console.log({ groupName, description, selectedMembers });
+    onClose();
   };
 
   return (

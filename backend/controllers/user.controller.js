@@ -17,7 +17,8 @@ export const getUserProfile = asyncHandler(async (req, res) => {
           path: "auth",
           select: "username email",
         }
-      });
+      })
+      .populate("groups");
 
   if (!user) throw new ResponseError("User does not exist", 404);
 

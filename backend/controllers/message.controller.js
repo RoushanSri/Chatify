@@ -2,35 +2,50 @@ import asyncHandler from "express-async-handler";
 import Messages from "../models/message.model.js";
 import ResponseError from "../types/ResponseError.js";
 import { getRecieverSocketId, io } from "../config/socket.js";
+import Group from "../models/group.model.js";
 
 export const getMessages = asyncHandler(async (req, res) => {
-  const { friendId } = req.params;
+  const { id, type } = req.params;
   const userId = req.userId;
 
-  if (!friendId || !userId)
-    throw new ResponseError("Failed to fetch messages", 402);
+  if (!id || !userId) {
+    throw new ResponseError("Failed to fetch messages", 400);
+  }
 
-  const messages = await Messages.find({
-    $or: [
-      { senderId: userId, recieverId: friendId },
-      { senderId: friendId, recieverId: userId },
-    ],
-  }).populate([{
-    path: "senderId",
-    populate: {
-      path: "auth",
-      select: "username email",
-    },
-  },{
-    path: "repliedTo",
-    populate: {
+  let messagesQuery;
+
+  if (type === "friend") {
+    messagesQuery = Messages.find({
+      $or: [
+        { senderId: userId, recieverId: id },
+        { senderId: id, recieverId: userId },
+      ],
+    });
+  } else if (type === "group") {
+    messagesQuery = Messages.find({ groupId: id });
+  } else {
+    throw new ResponseError("Invalid message type", 400);
+  }
+
+  const messages = await messagesQuery.populate([
+    {
       path: "senderId",
       populate: {
         path: "auth",
         select: "username email",
       },
     },
-  }])
+    {
+      path: "repliedTo",
+      populate: {
+        path: "senderId",
+        populate: {
+          path: "auth",
+          select: "username email",
+        },
+      },
+    },
+  ]);
 
   res.status(200).json({
     success: true,
@@ -39,7 +54,7 @@ export const getMessages = asyncHandler(async (req, res) => {
 });
 
 export const sendMessage = asyncHandler(async (req, res) => {
-  const { friendId } = req.params;
+  const { type, id } = req.params;
   const { text, image, replyId } = req.body;
   const userId = req.userId;
 
@@ -49,38 +64,65 @@ export const sendMessage = asyncHandler(async (req, res) => {
     //handle it with cloudinary
   }
 
-  const message = await Messages.create({
+  const messageData = {
     senderId: userId,
-    recieverId: friendId,
     repliedTo: replyId,
     text,
     image: imageUrl,
-  });
+  };
 
-  const newMessage = await message.populate([{
-    path: "senderId",
-    populate: {
-      path: "auth",
-      select: "username email",
-    },
-  },{
-    path: "repliedTo",
-    populate: {
+  if (type === "friend") {
+    messageData.recieverId = id;
+  } else if (type === "group") {
+    messageData.groupId = id;
+  } else {
+    throw new ResponseError("Invalid message type", 400);
+  }
+
+  const message = await Messages.create(messageData);
+
+  const newMessage = await message.populate([
+    {
       path: "senderId",
       populate: {
         path: "auth",
         select: "username email",
       },
     },
-  }]);
+    {
+      path: "repliedTo",
+      populate: {
+        path: "senderId",
+        populate: {
+          path: "auth",
+          select: "username email",
+        },
+      },
+    },
+  ]);
 
-  const recieverSocketId = getRecieverSocketId(friendId);
+  if (type === "friend") {
+    const recieverSocketId = getRecieverSocketId(id);
     if (recieverSocketId) {
       io.to(recieverSocketId).emit("newMessage", newMessage);
     }
+  } else if (type === "group") {
+    const group = await Group.findById(id).select("members");
+    group.members
+      .filter(memberId => memberId.toString() !== userId)
+      .forEach(memberId => {
+        const socketId = getRecieverSocketId(memberId);
+        if (socketId) {
+          io.to(socketId).emit("newGroupMessage", {
+            groupId: id,
+            message: newMessage,
+          });
+        }
+      });
+  }
 
   res.json({
     success: true,
-    message:newMessage,
+    message: newMessage,
   });
 });

@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Group from "../models/group.model.js";
 import ResponseError from "../types/ResponseError.js";
+import Users from "../models/user.model.js";
 
 export const addMember = asyncHandler(async (req, res) => {
   const { groupId, newMemberId } = req.body;
@@ -52,6 +53,11 @@ export const createGroup = asyncHandler(async (req, res) => {
     createdBy: userId,
     description
   })
+
+  await Users.updateMany(
+  { _id: { $in: allMembers } },
+  { $push: { groups: group._id } }
+);
 
   const newGroup = await Group.findById(group._id)
   .populate({
