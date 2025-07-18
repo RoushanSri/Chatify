@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Avatar from "@mui/material/Avatar";
 import img from "../assets/noImage.webp"
+import { createGroup } from "../redux/slices/groupSlice";
 
 
 function CreateGroup({ onClose }) {
@@ -12,6 +13,7 @@ function CreateGroup({ onClose }) {
   const [friends, setFriends] = useState([])
 
   const {profile} = useSelector(state=>state.user)
+  const dispatch = useDispatch()
 
   useEffect(() => {
           if (Array.isArray(profile?.friends)) {
@@ -29,7 +31,7 @@ function CreateGroup({ onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // API call logic here
+    dispatch(createGroup({name:groupName, description, members:selectedMembers}))
     console.log({ groupName, description, selectedMembers });
   };
 
