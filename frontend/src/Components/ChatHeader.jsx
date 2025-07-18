@@ -42,20 +42,20 @@ const ChatHeader = ({currentUser}) => {
       </div>
 
       <div className="flex items-center gap-2">
-        <button className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200">
+        <button className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 cursor-pointer">
           <Search size={20} />
         </button>
-        <button className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200">
+        <button className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 cursor-pointer">
           <Phone size={20} />
         </button>
-        <button className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200">
+        <button className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 cursor-pointer">
           <Video size={20} />
         </button>
 
         <div className="relative">
           <button 
             onClick={() => setShowDropdown(!showDropdown)}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200"
+            className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 cursor-pointer"
           >
             <MoreVertical size={20} />
           </button>

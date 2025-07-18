@@ -76,14 +76,14 @@ return (
         <div className="flex gap-6 items-center">
         <button
             onClick={() => setShowRequests(true)}
-            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300 relative"
+            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300 relative cursor-pointer"
         >
             Friend Requests
             {count!=0 && <span className="absolute w-5 h-5 -top-2 -right-2 bg-red-700 text-white p-2 rounded-full text-sm flex justify-center items-center">{count}</span>}
         </button>
         <button
             onClick={() => setAddFriend(true)}
-            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300"
+            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300 cursor-pointer"
         >
             Add Friend
         </button>
@@ -91,7 +91,7 @@ return (
             onClick={() => {
                 LogOut()
             }}
-            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300"
+            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300 cursor-pointer"
         >
             Logout
         </button>

@@ -51,6 +51,7 @@ function AddFriend({ onClose }) {
       toast.success("Request sent Successfully!!",{
         id:toastId
       })
+      setSearchedUser({...searchedUser,alreadyRequested:true})
       }catch(e){
         console.log(e);
         toast.error("Error while sending error!!",{

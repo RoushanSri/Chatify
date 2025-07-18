@@ -54,7 +54,7 @@ function MessageContainer({ message, currentUser, onReply }) {
         <button
         title="Reply"
         onClick={() => onReply?.(message)}
-        className={`absolute top-1/3 text-xs ${isCurrentUser(message.senderId)?"-left-6":"-right-6"} p-1 hidden group-hover:flex items-center gap-1 text-gray-400 hover:text-teal-500 transition`}
+        className={`absolute top-1/3 text-xs ${isCurrentUser(message.senderId)?"-left-6":"-right-6"} p-1 hidden group-hover:flex items-center gap-1 text-gray-400 hover:text-teal-500 transition cursor-pointer`}
       >
         <CornerUpLeft size={14} />
       </button>
