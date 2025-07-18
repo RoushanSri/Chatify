@@ -10,6 +10,7 @@ import AddFriend from "../Components/AddFriend";
 import FriendRequests from "../Components/FriendRequests";
 import { incrementRequestCount } from "../redux/slices/requestSlice";
 import toast from "react-hot-toast";
+import CreateGroup from "../Components/CreateGroup";
 
 function MainLayout() {
 
@@ -21,6 +22,7 @@ function MainLayout() {
     const [friends, setfriends] = useState([])
     const [addFriend, setAddFriend] = useState(false)
     const [showRequests, setShowRequests] = useState(false);
+    const [createGroup, setCreateGroup] = useState(false)
 
     useEffect(() => {
         if (Array.isArray(profile?.friends)) {
@@ -74,6 +76,12 @@ return (
         </div>
 
         <div className="flex gap-6 items-center">
+            <button
+            onClick={() => setCreateGroup(true)}
+            className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300 cursor-pointer"
+        >
+            Create Group
+        </button>
         <button
             onClick={() => setShowRequests(true)}
             className="text-white bg-teal-800 hover:bg-teal-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-300 relative cursor-pointer"
@@ -116,6 +124,9 @@ return (
             }
             {
                 showRequests && (<div className="absolute top-1/2 left-1/2"><FriendRequests onClose={()=>setShowRequests(false)}/></div>)
+            }
+            {
+                createGroup && (<div className="absolute"><CreateGroup onClose={()=>setCreateGroup(false)}/></div>)
             }
         </div>
     </div>
