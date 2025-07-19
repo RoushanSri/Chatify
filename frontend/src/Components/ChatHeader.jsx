@@ -39,7 +39,7 @@ const ChatHeader = ({currentUser, currentGroup, setFriendList, setGroupList}) =>
   };
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg">
+    <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-br from-teal-500 via-cyan-700 to-teal-900 text-white shadow-lg">
       <div className="flex items-center gap-3">
           <Avatar alt="Remy Sharp" src={img} />
         <div>

@@ -46,8 +46,9 @@ function GroupBox({ group, currentGroup, setCurrentUser, setCurrentGroup }) {
         setCurrentGroup(group)
       }}
       className={`w-full ${
-        currentGroup?._id === group._id ? "bg-teal-900" : ""
-      } text-white hover:bg-teal-800 transition-colors duration-200 rounded-lg cursor-pointer`}
+        currentGroup?._id === group._id ? "bg-gradient-to-r from-teal-600 to-teal-700 border-teal-400 shadow-lg shadow-teal-500/25 scale-[1.02]"
+        :"bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 hover:border-white/20 hover:shadow-lg hover:shadow-teal-500/10"
+      } transition-all duration-300 ease-in-out rounded-xl cursor-pointer border-2 w-full relative text-white`}
     >
       <div className="flex w-full p-3 items-center gap-3">
             <Avatar src={img}/> 
