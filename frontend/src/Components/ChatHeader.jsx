@@ -14,7 +14,7 @@ import {
 import Avatar from '@mui/material/Avatar';
 import img from "../assets/noImage.webp"
 
-const ChatHeader = ({currentUser, currentGroup}) => {
+const ChatHeader = ({currentUser, currentGroup, setFriendList, setGroupList}) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
 
@@ -25,6 +25,13 @@ const ChatHeader = ({currentUser, currentGroup}) => {
       setShowDropdown(false);
     }
   };
+
+  const handleAddMember = () =>{
+    if(currentGroup)
+      setFriendList(true)
+    else
+      setGroupList(true)
+  }
 
   const toggleNotifications = () => {
     setIsNotificationsEnabled(!isNotificationsEnabled);
@@ -85,9 +92,9 @@ const ChatHeader = ({currentUser, currentGroup}) => {
                 
                 <hr className="my-2 border-gray-200" />
                 
-                <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors">
+                <button onClick={handleAddMember} className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors">
                   <UserPlus size={16} />
-                  Add to Group
+                  {currentGroup?"Add Members":"Add to Group"}
                 </button>
                 
                 <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors">

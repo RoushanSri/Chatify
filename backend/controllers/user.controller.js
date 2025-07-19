@@ -12,7 +12,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
     .populate("auth", "-password")
     .populate({
         path: "friends",
-        select: "auth bio",
+        select: "auth bio groups",
         populate: {
           path: "auth",
           select: "username email",

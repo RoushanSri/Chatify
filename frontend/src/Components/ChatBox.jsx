@@ -8,7 +8,7 @@ import { getSocket } from '../socket';
 import SendMessage from './SendMessage';
 
 const ChatBox=({
-  currentUser, currentGroup
+  currentUser, currentGroup, setFriendList, setGroupList
 }) => {
   const [inputValue, setInputValue] = useState('')
   const [image, setImage] = useState("")
@@ -133,7 +133,7 @@ useEffect(() => {
 
   return (  
     <div className="flex flex-col bg-white w-full h-full transition-all duration-300 overflow-hidden">
-      <ChatHeader currentUser={currentUser} currentGroup={currentGroup}/>
+      <ChatHeader currentUser={currentUser} currentGroup={currentGroup} setFriendList={setFriendList} setGroupList={setGroupList}/>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
         {Array.isArray(messages) && messages.length === 0 ? (

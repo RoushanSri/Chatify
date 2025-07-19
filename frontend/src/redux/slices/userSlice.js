@@ -61,6 +61,12 @@ const initialState = {
 const userSlice = createSlice({
   name: "user",
   initialState,
+  reducers: {
+    addGroup: (state, action) => {
+      const { group } = action.payload;
+      state.profile.groups.push(group);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getUserProfile.pending, (state) => {
@@ -105,4 +111,5 @@ const userSlice = createSlice({
   },
 });
 
+export const {addGroup} =userSlice.actions
 export default userSlice.reducer;

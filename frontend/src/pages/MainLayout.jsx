@@ -12,6 +12,8 @@ import { incrementRequestCount } from "../redux/slices/requestSlice";
 import toast from "react-hot-toast";
 import CreateGroup from "../Components/CreateGroup";
 import GroupBox from "../Components/GroupBox";
+import FriendList from "../Components/FriendList";
+import GroupList from "../Components/GroupList";
 
 function MainLayout() {
 
@@ -25,6 +27,8 @@ function MainLayout() {
     const [addFriend, setAddFriend] = useState(false)
     const [showRequests, setShowRequests] = useState(false);
     const [createGroup, setCreateGroup] = useState(false)
+    const [friendList, setFriendList] = useState(false)
+    const [groupList, setGroupList] = useState(false)
 
     useEffect(() => {
         if (Array.isArray(profile?.friends)) {
@@ -129,7 +133,7 @@ return (
                 }
             </div>
             <div className="flex-1 overflow-y-auto min-h-0">
-                <ChatContainer currentUser={currentUser} currentGroup={currentGroup}/>
+                <ChatContainer currentUser={currentUser} currentGroup={currentGroup} setFriendList={setFriendList} setGroupList={setGroupList}/>
             </div>
             {
                 addFriend && (<div className="absolute top-1/2 left-1/2"><AddFriend onClose={()=>setAddFriend(false)}/></div>)
@@ -139,6 +143,14 @@ return (
             }
             {
                 createGroup && (<div className="absolute"><CreateGroup onClose={()=>setCreateGroup(false)}/></div>)
+            }
+            {
+                friendList && (<div className="absolute top-1/2 left-1/2"><FriendList onClose={()=>setFriendList(false)} currentGroup={currentGroup} onAddFriendToGroup={(selectedMembers)=>console.log(selectedMembers)
+                }/></div>)
+            }
+            {
+                groupList && (<div className="absolute top-1/2 left-1/2"><GroupList onClose={()=>setGroupList(false)} currentUser={currentUser} onSelectGroup={()=>console.log("add to this group")
+                }/></div>)
             }
         </div>
     </div>

@@ -107,7 +107,7 @@ function GroupBox({ group, currentGroup, setCurrentUser, setCurrentGroup }) {
                 },
               }}
             >
-              Remove Friend
+              Leave Group
             </MenuItem>
           </Menu>
         </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageCircle, Sparkles } from 'lucide-react';
 import ChatBox from './ChatBox.jsx'
 
-const ChatContainer = ({ currentUser, currentGroup }) => {
+const ChatContainer = ({ currentUser, currentGroup, setFriendList, setGroupList }) => {
   return (
     <>
       {!currentUser&&!currentGroup ? (
@@ -34,7 +34,7 @@ const ChatContainer = ({ currentUser, currentGroup }) => {
           </div>
         </div>
       ) : (
-        <ChatBox currentUser={currentUser} currentGroup={currentGroup}/>
+        <ChatBox currentUser={currentUser} currentGroup={currentGroup} setFriendList={setFriendList} setGroupList={setGroupList}/>
       )}
     </>
   );

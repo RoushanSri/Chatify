@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Avatar from "@mui/material/Avatar";
 import img from "../assets/noImage.webp"
 import { createGroup } from "../redux/slices/groupSlice";
+import { addGroup } from "../redux/slices/userSlice";
 
 
 function CreateGroup({ onClose }) {
@@ -29,9 +30,20 @@ function CreateGroup({ onClose }) {
     );
   };
 
+  const addGroupToUserProfile = (group)=>{
+    dispatch(addGroup({group}))
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createGroup({name:groupName, description, members:selectedMembers}))
+    .then(res=>{
+      if(res.error){
+        console.log("error");
+      }else{
+        addGroupToUserProfile(res.payload.group)
+      }
+    })
     onClose();
   };
 
