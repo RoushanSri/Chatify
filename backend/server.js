@@ -12,7 +12,7 @@ import groupRoutes from './routes/group.route.js'
 config()
 
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:"https://chatify-phi-seven.vercel.app",
     credentials:true
 }))
 
