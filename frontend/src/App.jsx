@@ -6,7 +6,8 @@ import Register from "./pages/Register"
 import MainLayout from "./pages/MainLayout"
 import UnAuthProtector from "./Components/UnAuthProtector"
 import { getSocket, initSocket } from "./socket"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
+import LandingPage from "./pages/LandingPage"
 
 function App() {
   
@@ -34,6 +35,7 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<LandingPage/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/verify-email" element={<EmailVerify/>}/>

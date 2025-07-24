@@ -1,4 +1,4 @@
-y
+# Chatify
 
 Chatify is a modern web-based chat application that enables real-time messaging between users. Built with a focus on simplicity and performance, Chatify offers a seamless chatting experience for individuals and groups.
 

@@ -4,7 +4,7 @@ let socket;
 
 export const initSocket = (userId) => {
   
-  socket = io("http://localhost:8080",{
+  socket = io("https://chatify-cahh.onrender.com",{
     query:{
       userId:userId.userId
     }
