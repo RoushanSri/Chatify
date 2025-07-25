@@ -56,7 +56,7 @@ export const register = asyncHandler(async (req, res) => {
     }
   );
 
-  const verificationLink = `http://localhost:8080/api/v1/auth/verify-email?token=${token}`;
+  const verificationLink = `https://chatify-cahh.onrender.com/api/v1/auth/verify-email?token=${token}`;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -104,7 +104,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
     throw new ResponseError("User registration failed", 500);
   }
 
-  const redirectUrl = `http://localhost:5173/login`;
+  const redirectUrl = `https://chatify-phi-seven.vercel.app/login`;
   res.redirect(redirectUrl);
 
   res.json({
